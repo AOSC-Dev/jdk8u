@@ -31,7 +31,7 @@
 class Bytes: AllStatic {
  private:
   // Helper function for swap_u8, not used in Loongson.
-  static inline u8   swap_u8_base(u4 x, u4 y) {}         // compiler-dependent implementation
+  static inline u8   swap_u8_base(u4 x, u4 y) { __builtin_unreachable(); }         // compiler-dependent implementation
 
  public:
   // Returns true if the byte ordering used by Java is different from the native byte ordering

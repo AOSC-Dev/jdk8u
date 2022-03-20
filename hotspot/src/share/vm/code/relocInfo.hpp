@@ -1042,7 +1042,7 @@ class metadata_Relocation : public DataRelocation {
  class internal_pc_Relocation : public Relocation {
   relocInfo::relocType type() { return relocInfo::internal_pc_type; }
   public:
-   address pc() {pd_get_address_from_code();}
+   address pc() { return pd_get_address_from_code(); }
          //void     fix_relocation_at_move(intptr_t delta);
          void     fix_relocation_after_move(const CodeBuffer* src, CodeBuffer* dest);
  };

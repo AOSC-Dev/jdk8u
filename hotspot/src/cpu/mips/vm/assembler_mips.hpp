@@ -870,7 +870,7 @@ class Assembler : public AbstractAssembler  {
   int offset(address entry) {
     assert(is_simm16((entry - pc() - 4) / 4), "change this code");
     if (!is_simm16((entry - pc() - 4) / 4)) {
-      tty->print_cr("!!! is_simm16: %x", (entry - pc() - 4) / 4);
+      tty->print_cr("!!! is_simm16: %lx", (entry - pc() - 4) / 4);
     }
     return (entry - pc() - 4) / 4;
   }
