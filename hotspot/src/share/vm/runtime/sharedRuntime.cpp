@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #include "precompiled.hpp"
 #include "classfile/systemDictionary.hpp"
 #include "classfile/vmSymbols.hpp"
@@ -82,6 +88,11 @@
 # include "nativeInst_ppc.hpp"
 # include "vmreg_ppc.inline.hpp"
 #endif
+#ifdef TARGET_ARCH_mips
+# include "nativeInst_mips.hpp"
+# include "vmreg_mips.inline.hpp"
+#endif
+
 #ifdef COMPILER1
 #include "c1/c1_Runtime1.hpp"
 #endif
@@ -220,6 +231,33 @@ void SharedRuntime::print_ic_miss_histogram() {
   }
 }
 #endif // PRODUCT
+void SharedRuntime::print_long(long long i) {
+  tty->print("%llx", i);
+}
+
+void SharedRuntime::print_int(int i) {
+  tty->print("%x", i);
+}
+
+void SharedRuntime::print_float(float f) {
+  tty->print("ld:%ld ", f);
+  tty->print("lx:%lx ", f);
+  tty->print("lf:%g ", f);
+}
+
+void SharedRuntime::print_double(double f) {
+  tty->print("%ld ", f);
+  tty->print("0x%lx ", f);
+  tty->print("%g ", f);
+}
+
+void SharedRuntime::print_str(char *str) {
+  tty->print("%s", str);
+}
+
+void SharedRuntime::print_reg_with_pc(char *reg_name, long i, long pc) {
+  tty->print_cr("%s: %lx pc: %lx", reg_name, i, pc);
+}
 
 #if INCLUDE_ALL_GCS
 

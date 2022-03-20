@@ -3481,7 +3481,12 @@ bool GraphBuilder::try_inline_intrinsics(ciMethod* callee) {
   bool cantrap = true;
   switch (id) {
     case vmIntrinsics::_arraycopy:
+#ifndef MIPS
       if (!InlineArrayCopy) return false;
+#else
+      // Return false for mips since LIR_Assembler::emit_arraycopy isn't implemented yet.
+      return false;
+#endif
       break;
 
 #ifdef JFR_HAVE_INTRINSICS

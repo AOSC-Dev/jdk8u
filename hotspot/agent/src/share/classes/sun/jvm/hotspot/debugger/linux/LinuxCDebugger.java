@@ -32,11 +32,13 @@ import sun.jvm.hotspot.debugger.cdbg.*;
 import sun.jvm.hotspot.debugger.x86.*;
 import sun.jvm.hotspot.debugger.amd64.*;
 import sun.jvm.hotspot.debugger.sparc.*;
+import sun.jvm.hotspot.debugger.mips64.*;
 import sun.jvm.hotspot.debugger.linux.x86.*;
 import sun.jvm.hotspot.debugger.linux.amd64.*;
 import sun.jvm.hotspot.debugger.aarch64.*;
 import sun.jvm.hotspot.debugger.linux.aarch64.*;
 import sun.jvm.hotspot.debugger.linux.sparc.*;
+import sun.jvm.hotspot.debugger.linux.mips64.*;
 import sun.jvm.hotspot.utilities.*;
 
 class LinuxCDebugger implements CDebugger {
@@ -106,6 +108,13 @@ class LinuxCDebugger implements CDebugger {
        Address pc  = context.getRegisterAsAddress(AARCH64ThreadContext.PC);
        if (pc == null) return null;
        return new LinuxAARCH64CFrame(dbg, fp, pc);
+    } else if (cpu.equals("mips64")) {
+       MIPS64ThreadContext context = (MIPS64ThreadContext) thread.getContext();
+       Address sp = context.getRegisterAsAddress(MIPS64ThreadContext.SP);
+       if (sp == null) return null;
+       Address pc  = context.getRegisterAsAddress(MIPS64ThreadContext.PC);
+       if (pc == null) return null;
+       return new LinuxMIPS64CFrame(dbg, sp, pc);
     } else {
        // Runtime exception thrown by LinuxThreadContextFactory if unknown cpu
        ThreadContext context = (ThreadContext) thread.getContext();

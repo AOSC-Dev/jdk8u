@@ -55,6 +55,9 @@
 #ifdef TARGET_ARCH_ppc
 # include "globals_ppc.hpp"
 #endif
+#ifdef TARGET_ARCH_mips
+# include "globals_mips.hpp"
+#endif
 #ifdef TARGET_OS_FAMILY_linux
 # include "globals_linux.hpp"
 #endif
@@ -78,6 +81,9 @@
 #endif
 #ifdef TARGET_OS_ARCH_linux_sparc
 # include "globals_linux_sparc.hpp"
+#endif
+#ifdef TARGET_OS_ARCH_linux_mips
+# include "globals_linux_mips.hpp"
 #endif
 #ifdef TARGET_OS_ARCH_linux_zero
 # include "globals_linux_zero.hpp"
@@ -116,6 +122,9 @@
 #ifdef TARGET_ARCH_sparc
 # include "c1_globals_sparc.hpp"
 #endif
+#ifdef TARGET_ARCH_mips
+# include "c1_globals_mips.hpp"
+#endif
 #ifdef TARGET_ARCH_arm
 # include "c1_globals_arm.hpp"
 #endif
@@ -147,6 +156,9 @@
 #endif
 #ifdef TARGET_ARCH_sparc
 # include "c2_globals_sparc.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "c2_globals_mips.hpp"
 #endif
 #ifdef TARGET_ARCH_arm
 # include "c2_globals_arm.hpp"
@@ -3209,7 +3221,7 @@ class CommandLineFlags {
   product(uintx, InitialHeapSize, 0,                                        \
           "Initial heap size (in bytes); zero means use ergonomics")        \
                                                                             \
-  product(uintx, MaxHeapSize, ScaleForWordSize(96*M),                       \
+  product(uintx, MaxHeapSize, ScaleForWordSize(MIPS64_ONLY(1500) NOT_MIPS64(96) *M),                     \
           "Maximum heap size (in bytes)")                                   \
                                                                             \
   product(uintx, OldSize, ScaleForWordSize(4*M),                            \
@@ -3739,10 +3751,10 @@ class CommandLineFlags {
           "The maximum number of interpreted frames to skip when searching "\
           "for recompilee")                                                 \
                                                                             \
-  develop(intx, DesiredMethodLimit,  8000,                                  \
+  product(intx, DesiredMethodLimit, 8000,                                   \
           "The desired maximum method size (in bytecodes) after inlining")  \
                                                                             \
-  develop(intx, HugeMethodLimit,  8000,                                     \
+  product(intx, HugeMethodLimit, 8000,                                      \
           "Don't compile methods larger than this if "                      \
           "+DontCompileHugeMethods")                                        \
                                                                             \

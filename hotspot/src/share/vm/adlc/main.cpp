@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 // MAIN.CPP - Entry point for the Architecture Description Language Compiler
 #include "adlc.hpp"
 
@@ -238,6 +244,10 @@ int main(int argc, char *argv[])
   AD.addInclude(AD._CPP_file, "assembler_aarch64.inline.hpp");
   AD.addInclude(AD._CPP_file, "nativeInst_aarch64.hpp");
   AD.addInclude(AD._CPP_file, "vmreg_aarch64.inline.hpp");
+#endif
+#ifdef TARGET_ARCH_mips
+  AD.addInclude(AD._CPP_file, "nativeInst_mips.hpp");
+  AD.addInclude(AD._CPP_file, "vmreg_mips.inline.hpp");
 #endif
 #ifdef TARGET_ARCH_sparc
   AD.addInclude(AD._CPP_file, "nativeInst_sparc.hpp");

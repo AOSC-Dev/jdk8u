@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_UTILITIES_MACROS_HPP
 #define SHARE_VM_UTILITIES_MACROS_HPP
 
@@ -371,6 +377,18 @@
 #else
 #define SPARC_ONLY(code)
 #define NOT_SPARC(code) code
+#endif
+
+#ifdef MIPS64
+#ifndef MIPS
+#define MIPS
+#endif
+#define MIPS64_ONLY(code) code
+#define NOT_MIPS64(code)
+#else
+#undef MIPS
+#define MIPS64_ONLY(code)
+#define NOT_MIPS64(code) code
 #endif
 
 #if defined(PPC32) || defined(PPC64)

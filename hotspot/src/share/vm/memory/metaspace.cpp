@@ -3065,12 +3065,12 @@ void Metaspace::allocate_metaspace_compressed_klass_ptrs(char* requested_addr, a
   // Don't use large pages for the class space.
   bool large_pages = false;
 
-#ifndef AARCH64
+#if !defined(MIPS) || !defined(AARCH64)
   ReservedSpace metaspace_rs = ReservedSpace(compressed_class_space_size(),
                                              _reserve_alignment,
                                              large_pages,
                                              requested_addr, 0);
-#else // AARCH64
+#else // MIPS64 || AARCH64
   ReservedSpace metaspace_rs;
 
   // Our compressed klass pointers may fit nicely into the lower 32
@@ -3107,7 +3107,7 @@ void Metaspace::allocate_metaspace_compressed_klass_ptrs(char* requested_addr, a
     }
   }
 
-#endif // AARCH64
+#endif // AARCH64 || MIPS64
 
   if (!metaspace_rs.is_reserved()) {
 #if INCLUDE_CDS

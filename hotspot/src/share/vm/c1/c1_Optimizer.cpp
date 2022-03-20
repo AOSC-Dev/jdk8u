@@ -309,8 +309,10 @@ Value CE_Eliminator::make_ifop(Value x, Instruction::Condition cond, Value y, Va
 }
 
 void Optimizer::eliminate_conditional_expressions() {
+#ifndef MIPS
   // find conditional expressions & replace them with IfOps
   CE_Eliminator ce(ir());
+#endif
 }
 
 class BlockMerger: public BlockClosure {

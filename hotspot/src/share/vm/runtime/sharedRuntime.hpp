@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_RUNTIME_SHAREDRUNTIME_HPP
 #define SHARE_VM_RUNTIME_SHAREDRUNTIME_HPP
 
@@ -587,6 +593,13 @@ class SharedRuntime: AllStatic {
   static void print_ic_miss_histogram();
 
 #endif // PRODUCT
+  static void print_long(long long i);
+  static void print_int(int i);
+  static void print_float(float i);
+  static void print_double(double i);
+  static void print_str(char *str);
+
+  static void print_reg_with_pc(char *reg_name, long i, long pc);
 };
 
 

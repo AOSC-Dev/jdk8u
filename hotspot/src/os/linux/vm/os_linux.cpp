@@ -1030,6 +1030,14 @@ void os::pd_start_thread(Thread* thread) {
   Monitor* sync_with_child = osthread->startThread_lock();
   MutexLockerEx ml(sync_with_child, Mutex::_no_safepoint_check_flag);
   sync_with_child->notify();
+
+#if defined MIPS && !defined ZERO
+  //To be accessed in NativeGeneralJump::patch_verified_entry()
+  if (thread->is_Java_thread())
+  {
+    ((JavaThread*)thread)->set_handle_wrong_method_stub(SharedRuntime::get_handle_wrong_method_stub());
+  }
+#endif
 }
 
 // Free Linux resources related to the OSThread
@@ -1969,6 +1977,7 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     {EM_ALPHA,       EM_ALPHA,   ELFCLASS64, ELFDATA2LSB, (char*)"Alpha"},
     {EM_MIPS_RS3_LE, EM_MIPS_RS3_LE, ELFCLASS32, ELFDATA2LSB, (char*)"MIPSel"},
     {EM_MIPS,        EM_MIPS,    ELFCLASS32, ELFDATA2MSB, (char*)"MIPS"},
+    {EM_MIPS,        EM_MIPS,    ELFCLASS64, ELFDATA2LSB, (char*)"MIPS64 LE"},
     {EM_PARISC,      EM_PARISC,  ELFCLASS32, ELFDATA2MSB, (char*)"PARISC"},
     {EM_68K,         EM_68K,     ELFCLASS32, ELFDATA2MSB, (char*)"M68k"},
     {EM_AARCH64,     EM_AARCH64, ELFCLASS64, ELFDATA2LSB, (char*)"AARCH64"},
@@ -1984,6 +1993,8 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     static  Elf32_Half running_arch_code=EM_SPARCV9;
   #elif  (defined __sparc) && (!defined _LP64)
     static  Elf32_Half running_arch_code=EM_SPARC;
+  #elif  (defined MIPS64)
+    static  Elf32_Half running_arch_code=EM_MIPS;
   #elif  (defined __powerpc64__)
     static  Elf32_Half running_arch_code=EM_PPC64;
   #elif  (defined __powerpc__)
@@ -2006,7 +2017,7 @@ void * os::dll_load(const char *filename, char *ebuf, int ebuflen)
     static  Elf32_Half running_arch_code=EM_AARCH64;
   #else
     #error Method os::dll_load requires that one of following is defined:\
-         IA32, AMD64, IA64, __sparc, __powerpc__, ARM, S390, ALPHA, MIPS, MIPSEL, PARISC, M68K, AARCH64
+         IA32, AMD64, IA64, __sparc, __powerpc__, ARM, S390, ALPHA, MIPS, MIPSEL, __mips64, PARISC, M68K, AARCH64
   #endif
 
   // Identify compatability class for VM's architecture and library's architecture
@@ -3513,7 +3524,7 @@ size_t os::Linux::find_large_page_size() {
 
 #ifndef ZERO
   large_page_size = IA32_ONLY(4 * M) AMD64_ONLY(2 * M) IA64_ONLY(256 * M) SPARC_ONLY(4 * M)
-                     ARM_ONLY(2 * M) PPC_ONLY(4 * M) AARCH64_ONLY(2 * M);
+                     ARM_ONLY(2 * M) PPC_ONLY(4 * M) AARCH64_ONLY(2 * M) MIPS64_ONLY(4 * M); //In MIPS _large_page_size is seted 4*M.
 #endif // ZERO
 
   FILE *fp = fopen("/proc/meminfo", "r");
@@ -5120,7 +5131,12 @@ jint os::init_2(void)
   Linux::fast_thread_clock_init();
 
   // Allocate a single page and mark it as readable for safepoint polling
+#ifdef OPT_SAFEPOINT
+  void * p = (void *)(0x10000);
+  address polling_page = (address) ::mmap(p, Linux::page_size(), PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+#else
   address polling_page = (address) ::mmap(NULL, Linux::page_size(), PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+#endif
   guarantee( polling_page != MAP_FAILED, "os::init_2: failed to allocate polling page" );
 
   os::set_polling_page( polling_page );
@@ -5797,6 +5813,7 @@ jlong os::thread_cpu_time(Thread *thread, bool user_sys_cpu_time) {
 PRAGMA_DIAG_PUSH
 PRAGMA_FORMAT_NONLITERAL_IGNORED
 static jlong slow_thread_cpu_time(Thread *thread, bool user_sys_cpu_time) {
+  static bool proc_task_unchecked = true;
   pid_t  tid = thread->osthread()->thread_id();
   char *s;
   char stat[2048];

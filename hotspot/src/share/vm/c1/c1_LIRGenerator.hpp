@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_C1_C1_LIRGENERATOR_HPP
 #define SHARE_VM_C1_C1_LIRGENERATOR_HPP
 
@@ -187,6 +193,9 @@ class LIRGenerator: public InstructionVisitor, public BlockClosure {
   LIR_OprList                     _reg_for_constants;
   Values                          _unpinned_constants;
 
+#ifdef MIPS
+  LIR_Const*                      _card_table_base;
+#endif
   friend class PhiResolver;
 
   // unified bailout support
@@ -207,6 +216,11 @@ class LIRGenerator: public InstructionVisitor, public BlockClosure {
   LIR_Opr load_constant(Constant* x);
   LIR_Opr load_constant(LIR_Const* constant);
 
+#ifdef MIPS
+  LIR_Const* card_table_base() const {
+     return _card_table_base;
+  }
+#endif
   // Given an immediate value, return an operand usable in logical ops.
   LIR_Opr load_immediate(int x, BasicType type);
 
@@ -227,6 +241,9 @@ class LIRGenerator: public InstructionVisitor, public BlockClosure {
   LIR_Opr round_item(LIR_Opr opr);
   LIR_Opr force_to_spill(LIR_Opr value, BasicType t);
 
+#ifdef MIPS
+  void profile_branch(If* if_instr, If::Condition cond, LIR_Opr left, LIR_Opr right);
+#endif
   PhiResolverState& resolver_state() { return _resolver_state; }
 
   void  move_to_phi(PhiResolver* resolver, Value cur_val, Value sux_val);
@@ -332,7 +349,11 @@ class LIRGenerator: public InstructionVisitor, public BlockClosure {
   void monitor_enter (LIR_Opr object, LIR_Opr lock, LIR_Opr hdr, LIR_Opr scratch, int monitor_no, CodeEmitInfo* info_for_exception, CodeEmitInfo* info);
   void monitor_exit  (LIR_Opr object, LIR_Opr lock, LIR_Opr hdr, LIR_Opr scratch, int monitor_no);
 
+#ifndef MIPS
   void new_instance    (LIR_Opr  dst, ciInstanceKlass* klass, bool is_unresolved, LIR_Opr  scratch1, LIR_Opr  scratch2, LIR_Opr  scratch3,  LIR_Opr scratch4, LIR_Opr  klass_reg, CodeEmitInfo* info);
+#else
+  void new_instance    (LIR_Opr  dst, ciInstanceKlass* klass, bool is_unresolved, LIR_Opr  scratch1, LIR_Opr  scratch2, LIR_Opr  scratch3,  LIR_Opr scratch4, LIR_Opr  scratch5, LIR_Opr scratch6, LIR_Opr klass_reg, CodeEmitInfo* info);
+#endif
 
   // machine dependent
   void cmp_mem_int(LIR_Condition condition, LIR_Opr base, int disp, int c, CodeEmitInfo* info);
@@ -354,6 +375,9 @@ class LIRGenerator: public InstructionVisitor, public BlockClosure {
   }
   LIR_Address* emit_array_address(LIR_Opr array_opr, LIR_Opr index_opr, BasicType type, bool needs_card_mark);
 
+#ifdef MIPS
+  void write_barrier(LIR_Opr addr);
+#endif
   // the helper for generate_address
   void add_large_constant(LIR_Opr src, int c, LIR_Opr dest);
 

@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_RUNTIME_THREAD_HPP
 #define SHARE_VM_RUNTIME_THREAD_HPP
 
@@ -1713,6 +1719,9 @@ public:
 #endif
 #ifdef TARGET_OS_ARCH_linux_aarch64
 # include "thread_linux_aarch64.hpp"
+#endif
+#ifdef TARGET_OS_ARCH_linux_mips
+# include "thread_linux_mips.hpp"
 #endif
 #ifdef TARGET_OS_ARCH_linux_sparc
 # include "thread_linux_sparc.hpp"

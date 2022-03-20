@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_C1_C1_LIRASSEMBLER_HPP
 #define SHARE_VM_C1_C1_LIRASSEMBLER_HPP
 
@@ -195,6 +201,9 @@ class LIR_Assembler: public CompilationResourceObj {
   void emit_op1(LIR_Op1* op);
   void emit_op2(LIR_Op2* op);
   void emit_op3(LIR_Op3* op);
+#ifdef MIPS
+  void emit_op4(LIR_Op4* op);
+#endif
   void emit_opBranch(LIR_OpBranch* op);
   void emit_opLabel(LIR_OpLabel* op);
   void emit_arraycopy(LIR_OpArrayCopy* op);
@@ -213,6 +222,10 @@ class LIR_Assembler: public CompilationResourceObj {
   void emit_delay(LIR_OpDelay* op);
 
   void arith_op(LIR_Code code, LIR_Opr left, LIR_Opr right, LIR_Opr dest, CodeEmitInfo* info, bool pop_fpu_stack);
+#ifdef MIPS
+  void arithmetic_frem(LIR_Code code, LIR_Opr left, LIR_Opr right, LIR_Opr temp, LIR_Opr result, CodeEmitInfo* info = NULL);
+  void emit_cmove_mips(LIR_Op4* op);
+#endif
   void arithmetic_idiv(LIR_Code code, LIR_Opr left, LIR_Opr right, LIR_Opr temp, LIR_Opr result, CodeEmitInfo* info);
   void intrinsic_op(LIR_Code code, LIR_Opr value, LIR_Opr unused, LIR_Opr dest, LIR_Op* op);
 #ifdef ASSERT
@@ -267,6 +280,9 @@ class LIR_Assembler: public CompilationResourceObj {
 #endif
 #ifdef TARGET_ARCH_aarch64
 # include "c1_LIRAssembler_aarch64.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "c1_LIRAssembler_mips.hpp"
 #endif
 #ifdef TARGET_ARCH_sparc
 # include "c1_LIRAssembler_sparc.hpp"

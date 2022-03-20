@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_INTERPRETER_BYTECODEINTERPRETER_INLINE_HPP
 #define SHARE_VM_INTERPRETER_BYTECODEINTERPRETER_INLINE_HPP
 
@@ -48,6 +54,9 @@
 #endif
 #ifdef TARGET_ARCH_aarch64
 # include "bytecodeInterpreter_aarch64.inline.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "bytecodeInterpreter_mips.inline.hpp"
 #endif
 #ifdef TARGET_ARCH_sparc
 # include "bytecodeInterpreter_sparc.inline.hpp"

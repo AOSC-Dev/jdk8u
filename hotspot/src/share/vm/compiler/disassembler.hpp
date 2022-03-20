@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_COMPILER_DISASSEMBLER_HPP
 #define SHARE_VM_COMPILER_DISASSEMBLER_HPP
 
@@ -95,6 +101,9 @@ class Disassembler {
 #endif
 #ifdef TARGET_ARCH_ppc
 # include "disassembler_ppc.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "disassembler_mips.hpp"
 #endif
 
 

@@ -30,6 +30,7 @@ import sun.jvm.hotspot.debugger.linux.amd64.*;
 import sun.jvm.hotspot.debugger.linux.ia64.*;
 import sun.jvm.hotspot.debugger.linux.x86.*;
 import sun.jvm.hotspot.debugger.linux.sparc.*;
+import sun.jvm.hotspot.debugger.linux.mips64.*;
 
 class LinuxThreadContextFactory {
    static ThreadContext createThreadContext(LinuxDebugger dbg) {
@@ -42,6 +43,8 @@ class LinuxThreadContextFactory {
          return new LinuxIA64ThreadContext(dbg);
       } else if (cpu.equals("sparc")) {
          return new LinuxSPARCThreadContext(dbg);
+      } else if (cpu.equals("mips64")) {
+         return new LinuxMIPS64ThreadContext(dbg);
       } else  {
         try {
           Class tcc = Class.forName("sun.jvm.hotspot.debugger.linux." +

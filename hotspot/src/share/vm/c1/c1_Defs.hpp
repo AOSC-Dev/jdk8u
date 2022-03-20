@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_C1_C1_DEFS_HPP
 #define SHARE_VM_C1_C1_DEFS_HPP
 
@@ -31,6 +37,9 @@
 #endif
 #ifdef TARGET_ARCH_aarch64
 # include "register_aarch64.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "register_mips.hpp"
 #endif
 #ifdef TARGET_ARCH_sparc
 # include "register_sparc.hpp"
@@ -58,6 +67,9 @@ enum {
 #endif
 #ifdef TARGET_ARCH_aarch64
 # include "c1_Defs_aarch64.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "c1_Defs_mips.hpp"
 #endif
 #ifdef TARGET_ARCH_sparc
 # include "c1_Defs_sparc.hpp"

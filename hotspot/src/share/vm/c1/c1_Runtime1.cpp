@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015, 2018. These
+ * modifications are Copyright (c) 2015, 2018, Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #include "precompiled.hpp"
 #include "asm/codeBuffer.hpp"
 #include "c1/c1_CodeStubs.hpp"
@@ -980,8 +986,17 @@ JRT_ENTRY(void, Runtime1::patch_code(JavaThread* thread, Runtime1::StubID stub_i
         unsigned char* byte_count = (unsigned char*) (stub_location - 1);
         unsigned char* byte_skip = (unsigned char*) (stub_location - 2);
         unsigned char* being_initialized_entry_offset = (unsigned char*) (stub_location - 3);
-        address copy_buff = stub_location - *byte_skip - *byte_count;
-        address being_initialized_entry = stub_location - *being_initialized_entry_offset;
+        address copy_buff = stub_location - *byte_count;
+        address being_initialized_entry = stub_location;
+#ifdef MIPS
+        // FIXME: In MIPS, byte_skip and being_initialized_entry_offset can not
+        // be contained in a byte
+        copy_buff -= (int)*byte_skip << 2;
+        being_initialized_entry -= (int)*being_initialized_entry_offset << 2;
+#else
+        copy_buff -= *byte_skip;
+        being_initialized_entry -= *being_initialized_entry_offset;
+#endif
         if (TracePatching) {
           ttyLocker ttyl;
           tty->print_cr(" Patching %s at bci %d at address " INTPTR_FORMAT "  (%s)", Bytecodes::name(code), bci,
@@ -997,7 +1012,7 @@ JRT_ENTRY(void, Runtime1::patch_code(JavaThread* thread, Runtime1::StubID stub_i
           map->print();
           tty->cr();
 
-          Disassembler::decode(copy_buff, copy_buff + *byte_count, tty);
+          Disassembler::decode(copy_buff - *byte_count, copy_buff + *byte_count, tty);
         }
         // depending on the code below, do_patch says whether to copy the patch body back into the nmethod
         bool do_patch = true;
@@ -1054,7 +1069,7 @@ JRT_ENTRY(void, Runtime1::patch_code(JavaThread* thread, Runtime1::StubID stub_i
           ShouldNotReachHere();
         }
 
-#if defined(SPARC) || defined(PPC)
+#if defined(SPARC) || defined(PPC) || defined(MIPS)
         if (load_klass_or_mirror_patch_id ||
             stub_id == Runtime1::load_appendix_patching_id) {
           // Update the location in the nmethod with the proper

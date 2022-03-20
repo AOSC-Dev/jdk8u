@@ -102,10 +102,18 @@ oop PSPromotionManager::copy_to_survivor_space(oop o) {
 
   oop new_obj = NULL;
 
+#if defined MIPS && !defined ZERO
+  if (UseSyncLevel >= 2000) OrderAccess::fence();
+#endif
+
   // NOTE! We must be very careful with any methods that access the mark
   // in o. There may be multiple threads racing on it, and it may be forwarded
   // at any time. Do not use oop methods for accessing the mark!
   markOop test_mark = o->mark();
+
+#if defined MIPS && !defined ZERO
+  if (UseSyncLevel >= 2000) OrderAccess::fence();
+#endif
 
   // The same test as "o->is_forwarded()"
   if (!test_mark->is_marked()) {
@@ -141,6 +149,10 @@ oop PSPromotionManager::copy_to_survivor_space(oop o) {
             }
           }
         }
+
+#if defined MIPS && !defined ZERO
+        if (UseSyncLevel >= 2000) OrderAccess::fence();
+#endif
       }
     }
 
@@ -200,6 +212,9 @@ oop PSPromotionManager::copy_to_survivor_space(oop o) {
 
     // Copy obj
     Copy::aligned_disjoint_words((HeapWord*)o, (HeapWord*)new_obj, new_obj_size);
+#if defined MIPS && !defined ZERO
+    if (UseSyncLevel >= 2000) OrderAccess::fence();
+#endif
 
     // Now we have to CAS in the header.
     if (o->cas_forward_to(new_obj, test_mark)) {
@@ -247,6 +262,10 @@ oop PSPromotionManager::copy_to_survivor_space(oop o) {
       // don't update this before the unallocation!
       new_obj = o->forwardee();
     }
+
+#if defined MIPS && !defined ZERO
+    if (UseSyncLevel >= 2000) OrderAccess::fence();
+#endif
   } else {
     assert(o->is_forwarded(), "Sanity");
     new_obj = o->forwardee();

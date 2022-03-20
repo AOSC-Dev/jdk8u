@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef _LIBPROC_H_
 #define _LIBPROC_H_
 
@@ -78,6 +84,11 @@ combination of ptrace and /proc calls.
 #endif
 #if defined(aarch64)
 #define user_regs_struct user_pt_regs
+#endif
+
+#if defined(mips) || defined(mipsel) || defined(mips64) || defined(mips64el)
+#include <asm/ptrace.h>
+#define user_regs_struct  pt_regs
 #endif
 
 // This C bool type must be int for compatibility with Linux calls and

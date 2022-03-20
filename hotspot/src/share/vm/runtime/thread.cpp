@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #include "precompiled.hpp"
 #include "classfile/classLoader.hpp"
 #include "classfile/javaClasses.hpp"
@@ -3453,6 +3459,11 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
   }
 
   JFR_ONLY(Jfr::on_vm_init();)
+
+#if defined MIPS && !defined ZERO
+  /* 2013/11/5 Jin: To be accessed in NativeGeneralJump::patch_verified_entry() */
+  main_thread->set_handle_wrong_method_stub(SharedRuntime::get_handle_wrong_method_stub());
+#endif
 
   // Should be done after the heap is fully created
   main_thread->cache_global_variables();

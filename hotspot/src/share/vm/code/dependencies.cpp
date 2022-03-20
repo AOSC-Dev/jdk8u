@@ -1090,8 +1090,15 @@ Klass* ClassHierarchyWalker::find_witness_in(KlassDepChange& changes,
     }
   }
 
-  if (is_witness(new_type) && !ignore_witness(new_type)) {
-    return new_type;
+  if (is_witness(new_type)) {
+    if (!ignore_witness(new_type)) {
+      return new_type;
+    }
+  } else if (!doing_subtype_search()) {
+    // No witness found, but is_witness() doesn't detect method re-abstraction in case of spot-checking.
+    if (witnessed_reabstraction_in_supers(new_type)) {
+      return new_type;
+    }
   }
 
   return NULL;

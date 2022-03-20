@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #include "precompiled.hpp"
 #include "asm/macroAssembler.hpp"
 #include "asm/macroAssembler.inline.hpp"
@@ -76,7 +82,11 @@ void InterpreterCodelet::print_on(outputStream* st) const {
 
   if (PrintInterpreter) {
     st->cr();
+    #ifndef MIPS
     Disassembler::decode(code_begin(), code_end(), st, DEBUG_ONLY(_strings) NOT_DEBUG(CodeStrings()));
+    #else
+    Disassembler::decode(code_begin(), code_end(), st);
+    #endif //disassembler_mips.cpp not implement "decode(address start, address end, outputStream* st, CodeComments c". 2013/02/25.
   }
 }
 

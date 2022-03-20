@@ -22,6 +22,12 @@
  *
  */
 
+/*
+ * This file has been modified by Loongson Technology in 2015. These
+ * modifications are Copyright (c) 2015 Loongson Technology, and are made
+ * available on the same license terms set forth above.
+ */
+
 #ifndef SHARE_VM_ASM_CODEBUFFER_HPP
 #define SHARE_VM_ASM_CODEBUFFER_HPP
 
@@ -634,6 +640,9 @@ class CodeBuffer: public StackObj {
 #endif
 #ifdef TARGET_ARCH_ppc
 # include "codeBuffer_ppc.hpp"
+#endif
+#ifdef TARGET_ARCH_mips
+# include "codeBuffer_mips.hpp"
 #endif
 
 };

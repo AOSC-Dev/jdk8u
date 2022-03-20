@@ -71,6 +71,9 @@ inline void PSScavenge::copy_and_push_safe_barrier(PSPromotionManager* pm,
   assert(should_scavenge(p, true), "revisiting object?");
 
   oop o = oopDesc::load_decode_heap_oop_not_null(p);
+#ifdef MIPS
+  if (oopDesc::is_null(o)) return;
+#endif
   oop new_obj = o->is_forwarded()
         ? o->forwardee()
         : pm->copy_to_survivor_space<promote_immediately>(o);

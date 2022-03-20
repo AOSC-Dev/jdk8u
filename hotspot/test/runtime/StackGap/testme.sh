@@ -49,6 +49,12 @@ if [ "x$gcc_cmd" = "x" ]; then
     exit 0;
 fi
 
+echo ${VM_CPU} | grep -q "mips"
+if [ $? = 0 ]
+then
+  CFLAGS="-mabi=${VM_BITS}"
+fi
+
 LD_LIBRARY_PATH=.:${COMPILEJAVA}/jre/lib/${VM_CPU}/${VM_TYPE}:/usr/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH
 

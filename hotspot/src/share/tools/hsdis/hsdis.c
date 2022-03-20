@@ -237,7 +237,6 @@ static const char* format_insn_close(const char* close,
   case dis_condjsr:     type = "condjsr";    break;
   case dis_dref:        type = "dref";       break;
   case dis_dref2:       type = "dref2";      break;
-  case dis_noninsn:     type = "noninsn";    break;
   }
 
   strcpy(buf, close);
@@ -495,6 +494,13 @@ static const char* native_arch_name() {
 #endif
 #ifdef LIBARCH_aarch64
   res = "aarch64";
+#endif
+#ifdef LIBARCH_mips64
+#ifdef LOONGSON
+  res = "mips:loongson_3a";
+#else
+  res = "mips:isa64";
+#endif
 #endif
   if (res == NULL)
     res = "architecture not set in Makefile!";
